@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+:root {
+  --background: #faf9f6;
+  --foreground: #1a1917;
+  --surface: #ffffff;
+  --border: #e8e5e0;
+  --muted: #9c9890;
+  --accent: #c4703e;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-border: var(--border);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* Smooth chip transitions */
+.filter-chip {
+  transition: all 0.15s ease;
+}
+
+.filter-chip:active {
+  transform: scale(0.96);
+}
+
+/* Subtle card entrance */
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card-animate {
+  animation: card-in 0.25s ease-out both;
+}

@@ -1,0 +1,8 @@
+atproto
+Mastodon.py
+google-api-python-client
+anthropic
+supabase
+python-dotenv
+requests
+pyyaml

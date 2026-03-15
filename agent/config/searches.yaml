@@ -1,0 +1,142 @@
+brands:
+
+  picasyfijas:
+    display_name: "Picas y Fijas"
+    reddit:
+      subreddits:
+        - puzzles
+        - mathpuzzles
+        - logicpuzzles
+        - numbertheory
+        - boardgames
+        - casualgames
+        - indiegaming
+        - webgames
+      keywords:
+        - "bulls and cows"
+        - "mastermind game"
+        - "number guessing game"
+        - "logic puzzle game"
+        - "code breaking game"
+        - "deduction game"
+        - "math puzzle app"
+        - "picas y fijas"
+    hackernews:
+      keywords:
+        - "bulls and cows"
+        - "mastermind game"
+        - "logic puzzle"
+        - "number guessing"
+        - "deduction game"
+    bluesky:
+      hashtags:
+        - puzzlegame
+        - logicpuzzle
+        - mathgames
+        - indiegame
+        - braingames
+    mastodon:
+      hashtags:
+        - puzzlegame
+        - mathpuzzle
+        - indiegame
+        - braingames
+    youtube:
+      queries:
+        - "bulls and cows game"
+        - "mastermind number game"
+        - "logic puzzle app"
+    linkedin:
+      queries:
+        - "logic puzzle game"
+        - "math puzzle app"
+
+  fluentaspeech:
+    display_name: "Fluentaspeech"
+    reddit:
+      subreddits:
+        - languagelearning
+        - EnglishLearning
+        - IELTS
+        - immigration
+      keywords:
+        - "pronunciation practice app"
+        - "english accent feedback"
+        - "mejorar pronunciación inglés"
+        - "IELTS speaking practice"
+        - "speech recognition pronunciation"
+        - "reduce accent"
+        - "pronunciation tool"
+    hackernews:
+      keywords:
+        - "pronunciation practice"
+        - "language learning app"
+        - "speech feedback"
+        - "english accent"
+    bluesky:
+      hashtags:
+        - languagelearning
+        - ESL
+        - pronunciation
+        - IELTS
+        - englishlearning
+    mastodon:
+      hashtags:
+        - languagelearning
+        - english
+        - pronunciation
+    youtube:
+      queries:
+        - "improve english pronunciation app"
+        - "pronunciation feedback AI"
+        - "IELTS speaking practice tool"
+    linkedin:
+      queries:
+        - "pronunciation practice english"
+        - "language learning app review"
+
+  comadrelab:
+    display_name: "ComadreLab"
+    reddit:
+      subreddits:
+        - smallbusiness
+        - entrepreneur
+        - freelance
+        - LatinoProfessionals
+        - webdev
+        - startups
+      keywords:
+        - "web developer pequeña empresa"
+        - "latina entrepreneur website"
+        - "small business web design"
+        - "necesito pagina web"
+        - "web developer LATAM"
+        - "bilingual web developer"
+        - "web studio small business"
+    hackernews:
+      keywords:
+        - "small business website"
+        - "web studio freelance"
+        - "looking for web developer"
+    bluesky:
+      hashtags:
+        - smallbusiness
+        - latina
+        - emprendedora
+        - webdev
+        - freelance
+    mastodon:
+      hashtags:
+        - smallbusiness
+        - webdesign
+        - latina
+        - emprendedora
+    youtube:
+      queries:
+        - "small business website tips"
+        - "latina entrepreneur online presence"
+        - "web developer for small business"
+    linkedin:
+      queries:
+        - "looking for web developer small business"
+        - "necesito desarrollador web"
