@@ -1,60 +1,64 @@
+import os
 import time
 import requests
 
-SEVEN_DAYS_AGO = time.time() - (7 * 24 * 60 * 60)
-HEADERS = {"User-Agent": "anzuelo/1.0 (lead finder bot)"}
+SERPER_URL = "https://google.serper.dev/search"
 
 
 def search(brand: str, config: dict) -> list[dict]:
     seen = set()
     results = []
 
-    subreddits = config.get("subreddits", [])
-    keywords = config.get("keywords", [])
+    api_key = os.environ.get("SERPER_API_KEY")
+    if not api_key:
+        print("  [reddit] Missing SERPER_API_KEY")
+        return []
 
-    for subreddit_name in subreddits:
-        for keyword in keywords:
-            try:
-                response = requests.get(
-                    f"https://www.reddit.com/r/{subreddit_name}/search.json",
-                    params={
-                        "q": keyword,
-                        "sort": "new",
-                        "limit": 10,
-                        "restrict_sr": "on",
-                        "t": "week",
-                    },
-                    headers=HEADERS,
-                    timeout=15,
-                )
-                response.raise_for_status()
-                data = response.json()
+    queries = config.get("queries", [])
 
-                for child in data.get("data", {}).get("children", []):
-                    post = child["data"]
+    for query in queries:
+        try:
+            response = requests.post(
+                SERPER_URL,
+                json={
+                    "q": f"site:reddit.com {query}",
+                    "num": 10,
+                    "tbs": "qdr:w",
+                },
+                headers={
+                    "X-API-KEY": api_key,
+                    "Content-Type": "application/json",
+                },
+                timeout=15,
+            )
+            response.raise_for_status()
+            data = response.json()
 
-                    if post["created_utc"] < SEVEN_DAYS_AGO:
-                        continue
-                    if post["id"] in seen:
-                        continue
-                    seen.add(post["id"])
+            for item in data.get("organic", []):
+                link = item.get("link", "")
+                if "reddit.com" not in link:
+                    continue
+                if link in seen:
+                    continue
+                seen.add(link)
 
-                    title = post.get("title", "")
-                    selftext = post.get("selftext", "")
-                    content = f"{title} {selftext}".strip()[:1000]
+                title = item.get("title", "")
+                snippet = item.get("snippet", "")
+                content = f"{title} {snippet}".strip()[:1000]
 
-                    results.append({
-                        "post_id": post["id"],
-                        "author": post.get("author"),
-                        "content": content,
-                        "url": f"https://www.reddit.com{post.get('permalink', '')}",
-                        "platform": "reddit",
-                    })
+                post_id = link.rstrip("/").split("/")[-1]
 
-                # Rate limit: ~1 request per second
-                time.sleep(1)
+                results.append({
+                    "post_id": f"reddit_{post_id}",
+                    "author": "",
+                    "content": content,
+                    "url": link,
+                    "platform": "reddit",
+                })
 
-            except Exception as e:
-                print(f"  [reddit] Error searching r/{subreddit_name} for '{keyword}': {e}")
+            time.sleep(0.5)
+
+        except Exception as e:
+            print(f"  [reddit] Error searching for '{query}': {e}")
 
     return results

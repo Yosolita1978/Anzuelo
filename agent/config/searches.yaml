@@ -3,24 +3,10 @@ brands:
   picasyfijas:
     display_name: "Picas y Fijas"
     reddit:
-      subreddits:
-        - puzzles
-        - mathpuzzles
-        - logicpuzzles
-        - numbertheory
-        - boardgames
-        - gaming
-        - indiegaming
-        - webgames
-      keywords:
-        - "bulls and cows"
-        - "mastermind game"
-        - "number guessing game"
-        - "logic puzzle game"
-        - "code breaking game"
-        - "deduction game"
-        - "math puzzle app"
-        - "picas y fijas"
+      queries:
+        - "bulls and cows game"
+        - "mastermind number guessing game"
+        - "logic puzzle deduction game"
     hackernews:
       keywords:
         - "bulls and cows"
@@ -59,19 +45,10 @@ brands:
   fluentaspeech:
     display_name: "Fluentaspeech"
     reddit:
-      subreddits:
-        - languagelearning
-        - EnglishLearning
-        - IELTS
-        - immigration
-      keywords:
-        - "pronunciation practice app"
-        - "english accent feedback"
-        - "mejorar pronunciación inglés"
-        - "IELTS speaking practice"
-        - "speech recognition pronunciation"
-        - "reduce accent"
-        - "pronunciation tool"
+      queries:
+        - "pronunciation practice app english"
+        - "IELTS speaking practice tool"
+        - "reduce accent english feedback"
     hackernews:
       keywords:
         - "pronunciation practice"
@@ -108,21 +85,10 @@ brands:
   comadrelab:
     display_name: "ComadreLab"
     reddit:
-      subreddits:
-        - smallbusiness
-        - entrepreneur
-        - freelance
-        - LatinoProfessionals
-        - webdev
-        - startups
-      keywords:
-        - "web developer pequeña empresa"
+      queries:
+        - "small business web design developer"
         - "latina entrepreneur website"
-        - "small business web design"
-        - "necesito pagina web"
-        - "web developer LATAM"
-        - "bilingual web developer"
-        - "web studio small business"
+        - "necesito pagina web negocio"
     hackernews:
       keywords:
         - "small business website"
