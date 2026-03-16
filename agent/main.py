@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from searchers import reddit, hackernews
+from searchers import reddit, hackernews, bluesky, mastodon, threads, youtube, linkedin
 from scoring.relevance import score_lead
 from storage.db import is_duplicate, save_lead
 from analysis.gaps import analyze_gaps
@@ -12,6 +12,11 @@ from analysis.gaps import analyze_gaps
 SEARCHERS = {
     "reddit": reddit,
     "hackernews": hackernews,
+    "bluesky": bluesky,
+    "mastodon": mastodon,
+    "threads": threads,
+    "youtube": youtube,
+    "linkedin": linkedin,
 }
 
 

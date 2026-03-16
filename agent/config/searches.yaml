@@ -46,6 +46,11 @@ brands:
         - "bulls and cows game"
         - "mastermind number game"
         - "logic puzzle app"
+    threads:
+      queries:
+        - "bulls and cows game"
+        - "mastermind number game"
+        - "logic puzzle app"
     linkedin:
       queries:
         - "logic puzzle game"
@@ -90,6 +95,11 @@ brands:
         - "improve english pronunciation app"
         - "pronunciation feedback AI"
         - "IELTS speaking practice tool"
+    threads:
+      queries:
+        - "pronunciation practice app"
+        - "english accent improvement"
+        - "IELTS speaking practice"
     linkedin:
       queries:
         - "pronunciation practice english"
@@ -136,6 +146,11 @@ brands:
         - "small business website tips"
         - "latina entrepreneur online presence"
         - "web developer for small business"
+    threads:
+      queries:
+        - "small business web design"
+        - "latina entrepreneur website"
+        - "necesito pagina web"
     linkedin:
       queries:
         - "looking for web developer small business"

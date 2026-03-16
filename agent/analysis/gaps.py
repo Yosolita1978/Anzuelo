@@ -10,7 +10,7 @@ Identify recurring gaps — unanswered questions, unresolved frustrations, or to
 For each gap, suggest a specific piece of content that serves the audience AND naturally introduces the product without being spammy.
 Respond ONLY with valid JSON array, no markdown, no preamble:
 [{"gap_summary": "...", "suggested_content": "...", "suggested_format": "..."}]
-Valid formats: bluesky_thread, reddit_post, youtube_short, linkedin_post, mastodon_post"""
+Valid formats: bluesky_thread, reddit_post, youtube_short, linkedin_post, mastodon_post, threads_post"""
 
 
 def analyze_gaps(

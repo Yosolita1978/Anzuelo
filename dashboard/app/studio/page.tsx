@@ -19,6 +19,7 @@ export default async function StudioPage({
       <h1 className="text-xl font-bold">Content Studio</h1>
       <Suspense fallback={null}>
         <ContentStudio
+          key={`${params.brand}-${params.topic}-${params.format}`}
           initialTopic={params.topic || ""}
           initialBrand={params.brand || "picasyfijas"}
           initialFormat={params.format || "standalone_post"}

@@ -17,6 +17,7 @@ const PLATFORMS = [
   { value: 'mastodon', label: 'Mastodon' },
   { value: 'youtube', label: 'YouTube' },
   { value: 'linkedin', label: 'LinkedIn' },
+  { value: 'threads', label: 'Threads' },
 ]
 
 const STATUSES = [
@@ -48,6 +49,7 @@ function FilterSelect({
       params.set(paramName, value)
     }
     router.push(`?${params.toString()}`)
+    router.refresh()
   }
 
   return (

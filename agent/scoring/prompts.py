@@ -7,7 +7,7 @@ Respond ONLY with valid JSON, no markdown, no preamble:
 {
   "score": <integer 1-10>,
   "reason": "<one sentence explaining why>",
-  "suggested_reply": "<natural, non-spammy reply — add value first, mention product only if it genuinely fits. Match the language of the post.>"
+  "suggested_reply": "<natural, non-spammy reply — add value first, mention product only if it genuinely fits. When mentioning the product, include the link: https://www.picasyfijas.com/ — Match the language of the post.>"
 }
 
 Score guide:
@@ -24,7 +24,7 @@ Respond ONLY with valid JSON, no markdown, no preamble:
 {
   "score": <integer 1-10>,
   "reason": "<one sentence explaining why>",
-  "suggested_reply": "<natural, non-spammy reply — add value first, mention product only if it genuinely fits. Match the language of the post.>"
+  "suggested_reply": "<natural, non-spammy reply — add value first, mention product only if it genuinely fits. When mentioning the product, include the link: https://fluentaspeech.com/ — Match the language of the post.>"
 }
 
 Score guide:
@@ -41,7 +41,7 @@ Respond ONLY with valid JSON, no markdown, no preamble:
 {
   "score": <integer 1-10>,
   "reason": "<one sentence explaining why>",
-  "suggested_reply": "<natural, non-spammy reply — add value first, mention product only if it genuinely fits. Match the language of the post.>"
+  "suggested_reply": "<natural, non-spammy reply — add value first, mention product only if it genuinely fits. When mentioning the product, include the link: https://www.comadrelab.dev/ — Match the language of the post.>"
 }
 
 Score guide:
