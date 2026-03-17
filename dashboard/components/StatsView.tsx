@@ -257,12 +257,12 @@ function PlausibleEmbed({ brand }: { brand: string }) {
       ></iframe>
     `
 
-    // Load the embed host script (re-add each time so it re-scans for iframes)
+    // Remove old script and re-add with cache bust so it re-scans for the new iframe
     const oldScript = document.querySelector('script[data-plausible-embed]')
     if (oldScript) oldScript.remove()
 
     const script = document.createElement('script')
-    script.src = 'https://plausible.io/js/embed.host.js'
+    script.src = `https://plausible.io/js/embed.host.js?v=${Date.now()}`
     script.async = true
     script.setAttribute('data-plausible-embed', 'true')
     document.body.appendChild(script)
@@ -271,6 +271,8 @@ function PlausibleEmbed({ brand }: { brand: string }) {
       if (containerRef.current) {
         containerRef.current.innerHTML = ''
       }
+      const s = document.querySelector('script[data-plausible-embed]')
+      if (s) s.remove()
     }
   }, [plausibleUrl])
 
