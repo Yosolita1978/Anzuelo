@@ -2,6 +2,8 @@ import { supabaseServer } from "@/lib/supabase";
 import type { CalendarEntry } from "@/lib/types";
 import CalendarGrid from "@/components/CalendarGrid";
 
+export const dynamic = "force-dynamic";
+
 export default async function CalendarPage() {
   const { data: entries } = await supabaseServer
     .from("content_calendar")
