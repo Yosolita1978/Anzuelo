@@ -1,19 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-
-const BRANDS = [
-  { value: '', label: 'Select brand...' },
-  { value: 'picasyfijas', label: 'Picas y Fijas' },
-  { value: 'fluentaspeech', label: 'Fluentaspeech' },
-  { value: 'comadrelab', label: 'ComadreLab' },
-]
-
-const PLAUSIBLE_LINKS: Record<string, string> = {
-  picasyfijas: 'https://plausible.io/share/picasyfijas.com?auth=YAafqoFzHUj5ejoRtomWm',
-  fluentaspeech: 'https://plausible.io/share/fluentaspeech.com?auth=f5SNg1FO936U9l7x-Wrb1',
-  comadrelab: 'https://plausible.io/share/comadrelab.dev?auth=BkkiJFEUSELsrQ1ccWFLu',
-}
+import { useBrands } from '@/lib/useBrands'
 
 type Stats = {
   summary: { total: number; replied: number; skipped: number; new: number; replyRate: number }
@@ -25,6 +13,7 @@ type Stats = {
 }
 
 export default function StatsView() {
+  const { brandOptions, brandMap } = useBrands()
   const [brand, setBrand] = useState('')
   const [stats, setStats] = useState<Stats | null>(null)
   const [loading, setLoading] = useState(false)
@@ -60,7 +49,7 @@ export default function StatsView() {
       <div className="flex flex-col gap-1">
         <label className="text-xs font-medium" style={{ color: 'var(--muted)' }}>Brand</label>
         <select value={brand} onChange={(e) => setBrand(e.target.value)} className={selectClass(!!brand)}>
-          {BRANDS.map((b) => (
+          {brandOptions.map((b) => (
             <option key={b.value} value={b.value}>{b.label}</option>
           ))}
         </select>
@@ -95,7 +84,7 @@ export default function StatsView() {
           <PlatformBreakdown byPlatform={stats.byPlatform} total={stats.summary.total} />
           <DailyChart dailyCounts={stats.dailyCounts} />
           <ScoreDistribution byScore={stats.byScore} />
-          <PlausibleEmbed brand={brand} />
+          <PlausibleEmbed plausibleLink={brandMap[brand]?.plausible_link ?? null} />
         </div>
       ) : null}
     </div>
@@ -236,8 +225,8 @@ function DailyChart({ dailyCounts }: { dailyCounts: Record<string, number> }) {
   )
 }
 
-function PlausibleEmbed({ brand }: { brand: string }) {
-  const plausibleUrl = PLAUSIBLE_LINKS[brand]
+function PlausibleEmbed({ plausibleLink }: { plausibleLink: string | null }) {
+  const plausibleUrl = plausibleLink
   const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {

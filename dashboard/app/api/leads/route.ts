@@ -1,11 +1,49 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase";
 
+export async function DELETE(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const brand = searchParams.get("brand");
+  const olderThanDays = searchParams.get("older_than_days");
+  const status = searchParams.get("status");
+
+  if (!brand || !olderThanDays) {
+    return NextResponse.json(
+      { error: "brand and older_than_days are required" },
+      { status: 400 }
+    );
+  }
+
+  const cutoffDate = new Date();
+  cutoffDate.setDate(cutoffDate.getDate() - parseInt(olderThanDays));
+  const cutoffISO = cutoffDate.toISOString();
+
+  let query = supabaseServer
+    .from("leads")
+    .delete()
+    .eq("brand", brand)
+    .lt("found_at", cutoffISO);
+
+  if (status) {
+    query = query.eq("status", status);
+  }
+
+  const { data, error } = await query.select("id");
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ deleted: data?.length ?? 0 });
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const brand = searchParams.get("brand");
   const platform = searchParams.get("platform");
   const status = searchParams.get("status");
+  const minScore = searchParams.get("min_score");
+  const maxScore = searchParams.get("max_score");
 
   if (!brand) {
     return NextResponse.json([]);
@@ -23,6 +61,12 @@ export async function GET(request: NextRequest) {
   }
   if (status) {
     query = query.eq("status", status);
+  }
+  if (minScore) {
+    query = query.gte("score", parseInt(minScore));
+  }
+  if (maxScore) {
+    query = query.lte("score", parseInt(maxScore));
   }
 
   const { data, error } = await query;

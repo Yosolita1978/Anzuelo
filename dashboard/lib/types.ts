@@ -37,5 +37,18 @@ export type CalendarEntry = {
   created_at: string
 }
 
-export type Brand = 'picasyfijas' | 'fluentaspeech' | 'comadrelab' | 'all'
+export type BrandConfig = {
+  id: string
+  slug: string
+  display_name: string
+  color_bg: string
+  color_fg: string
+  description: string | null
+  scoring_prompt: string | null
+  website_url: string | null
+  plausible_link: string | null
+  active: boolean
+  created_at: string
+}
+
 export type Platform = 'reddit' | 'hackernews' | 'bluesky' | 'mastodon' | 'youtube' | 'linkedin' | 'all'

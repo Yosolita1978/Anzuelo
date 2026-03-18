@@ -2,14 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import type { Lead } from '@/lib/types'
+import { useBrands } from '@/lib/useBrands'
 import LeadCard from './LeadCard'
-
-const BRANDS = [
-  { value: '', label: 'Select brand...' },
-  { value: 'picasyfijas', label: 'Picas y Fijas' },
-  { value: 'fluentaspeech', label: 'Fluentaspeech' },
-  { value: 'comadrelab', label: 'ComadreLab' },
-]
 
 const PLATFORMS = [
   { value: '', label: 'All platforms' },
@@ -29,12 +23,26 @@ const STATUSES = [
   { value: 'skipped', label: 'Skipped' },
 ]
 
+const SCORES = [
+  { value: '', label: 'All scores' },
+  { value: '9-10', label: '9-10 Strong' },
+  { value: '7-8', label: '7-8 Good' },
+  { value: '5-6', label: '5-6 Weak' },
+]
+
 export default function LeadsView() {
+  const { brandOptions } = useBrands()
   const [brand, setBrand] = useState('')
   const [platform, setPlatform] = useState('')
   const [status, setStatus] = useState('')
+  const [scoreRange, setScoreRange] = useState('')
   const [leads, setLeads] = useState<Lead[]>([])
   const [loading, setLoading] = useState(false)
+  const [showCleanup, setShowCleanup] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState<{ days: number; label: string } | null>(null)
+  const [deleting, setDeleting] = useState(false)
+  const [deleteResult, setDeleteResult] = useState<string | null>(null)
+  const [refetchKey, setRefetchKey] = useState(0)
 
   useEffect(() => {
     if (!brand) {
@@ -46,6 +54,11 @@ export default function LeadsView() {
     params.set('brand', brand)
     if (platform) params.set('platform', platform)
     if (status) params.set('status', status)
+    if (scoreRange) {
+      const [min, max] = scoreRange.split('-')
+      params.set('min_score', min)
+      params.set('max_score', max)
+    }
 
     setLoading(true)
     fetch(`/api/leads?${params.toString()}`)
@@ -58,10 +71,34 @@ export default function LeadsView() {
         setLeads([])
         setLoading(false)
       })
-  }, [brand, platform, status])
+  }, [brand, platform, status, scoreRange, refetchKey])
 
   function handleRemove(id: string) {
     setLeads((prev) => prev.filter((lead) => lead.id !== id))
+  }
+
+  function handleBatchDelete(days: number) {
+    if (!brand) return
+    setDeleting(true)
+    setDeleteResult(null)
+    const params = new URLSearchParams()
+    params.set('brand', brand)
+    params.set('older_than_days', String(days))
+    params.set('status', 'skipped')
+
+    fetch(`/api/leads?${params.toString()}`, { method: 'DELETE' })
+      .then((res) => res.json())
+      .then((data) => {
+        setDeleteResult(`Deleted ${data.deleted} skipped lead${data.deleted !== 1 ? 's' : ''}`)
+        setConfirmDelete(null)
+        setDeleting(false)
+        setRefetchKey((k) => k + 1)
+        setTimeout(() => setDeleteResult(null), 4000)
+      })
+      .catch(() => {
+        setDeleteResult('Error deleting leads')
+        setDeleting(false)
+      })
   }
 
   const selectClass = (active: boolean) =>
@@ -77,7 +114,7 @@ export default function LeadsView() {
         <div className="flex flex-col gap-1">
           <label className="text-xs font-medium" style={{ color: 'var(--muted)' }}>Brand</label>
           <select value={brand} onChange={(e) => setBrand(e.target.value)} className={selectClass(!!brand)}>
-            {BRANDS.map((b) => (
+            {brandOptions.map((b) => (
               <option key={b.value} value={b.value}>{b.label}</option>
             ))}
           </select>
@@ -98,7 +135,79 @@ export default function LeadsView() {
             ))}
           </select>
         </div>
+        <div className="flex flex-col gap-1">
+          <label className="text-xs font-medium" style={{ color: 'var(--muted)' }}>Score</label>
+          <select value={scoreRange} onChange={(e) => setScoreRange(e.target.value)} className={selectClass(!!scoreRange)}>
+            {SCORES.map((s) => (
+              <option key={s.value} value={s.value}>{s.label}</option>
+            ))}
+          </select>
+        </div>
       </div>
+
+      {brand && (
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setShowCleanup(!showCleanup)}
+            className="text-xs font-medium underline"
+            style={{ color: 'var(--muted)' }}
+          >
+            {showCleanup ? 'Hide cleanup' : 'Clean up old leads'}
+          </button>
+          {deleteResult && (
+            <span className="text-xs font-medium" style={{ color: 'var(--accent)' }}>{deleteResult}</span>
+          )}
+        </div>
+      )}
+
+      {brand && showCleanup && (
+        <div
+          className="flex flex-wrap items-center gap-3 rounded-xl border p-4"
+          style={{ borderColor: 'var(--border)', background: 'var(--surface)' }}
+        >
+          <span className="text-xs font-medium" style={{ color: 'var(--muted)' }}>
+            Delete skipped leads older than:
+          </span>
+          {[
+            { days: 7, label: '1 week' },
+            { days: 14, label: '2 weeks' },
+            { days: 30, label: '1 month' },
+          ].map((opt) => (
+            <button
+              key={opt.days}
+              onClick={() => setConfirmDelete(opt)}
+              className="rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors hover:border-red-400 hover:text-red-600"
+              style={{ borderColor: 'var(--border)' }}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {confirmDelete && (
+        <div
+          className="flex items-center gap-3 rounded-xl border border-red-300 bg-red-50 p-4"
+        >
+          <span className="text-sm">
+            Delete all <strong>skipped</strong> leads older than <strong>{confirmDelete.label}</strong> for this brand?
+          </span>
+          <button
+            onClick={() => handleBatchDelete(confirmDelete.days)}
+            disabled={deleting}
+            className="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-700 disabled:opacity-50"
+          >
+            {deleting ? 'Deleting...' : 'Yes, delete'}
+          </button>
+          <button
+            onClick={() => setConfirmDelete(null)}
+            className="text-xs font-medium underline"
+            style={{ color: 'var(--muted)' }}
+          >
+            Cancel
+          </button>
+        </div>
+      )}
 
       {!brand ? (
         <div

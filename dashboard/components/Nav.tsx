@@ -10,6 +10,7 @@ const TABS = [
   { href: '/studio', label: 'Studio' },
   { href: '/calendar', label: 'Calendar' },
   { href: '/stats', label: 'Stats' },
+  { href: '/brands', label: 'Brands' },
 ]
 
 export default function Nav() {

@@ -8,6 +8,7 @@ export async function PATCH(
   const { id } = await params;
   const body = await request.json();
   const status = body.status as string;
+  const ignoreAuthor = body.ignore_author as boolean | undefined;
 
   if (!["replied", "skipped"].includes(status)) {
     return NextResponse.json(
@@ -25,6 +26,20 @@ export async function PATCH(
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  if (ignoreAuthor && data.author) {
+    await supabaseServer
+      .from("ignored_authors")
+      .upsert(
+        {
+          brand: data.brand,
+          author: data.author,
+          platform: data.platform,
+          reason: `Skipped lead ${id}`,
+        },
+        { onConflict: "brand,author" }
+      );
   }
 
   return NextResponse.json(data);

@@ -2,14 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import type { ContentOpportunity } from '@/lib/types'
+import { useBrands } from '@/lib/useBrands'
 import GapCard from './GapCard'
-
-const BRANDS = [
-  { value: '', label: 'Select brand...' },
-  { value: 'picasyfijas', label: 'Picas y Fijas' },
-  { value: 'fluentaspeech', label: 'Fluentaspeech' },
-  { value: 'comadrelab', label: 'ComadreLab' },
-]
 
 const STATUSES = [
   { value: '', label: 'New (default)' },
@@ -19,6 +13,7 @@ const STATUSES = [
 ]
 
 export default function GapsView() {
+  const { brandOptions } = useBrands()
   const [brand, setBrand] = useState('')
   const [status, setStatus] = useState('')
   const [opportunities, setOpportunities] = useState<ContentOpportunity[]>([])
@@ -64,7 +59,7 @@ export default function GapsView() {
         <div className="flex flex-col gap-1">
           <label className="text-xs font-medium" style={{ color: 'var(--muted)' }}>Brand</label>
           <select value={brand} onChange={(e) => setBrand(e.target.value)} className={selectClass(!!brand)}>
-            {BRANDS.map((b) => (
+            {brandOptions.map((b) => (
               <option key={b.value} value={b.value}>{b.label}</option>
             ))}
           </select>

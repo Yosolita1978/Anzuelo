@@ -1,12 +1,10 @@
-import os
-import yaml
 from dotenv import load_dotenv
 
 load_dotenv()
 
 from searchers import reddit, hackernews, bluesky, mastodon, threads, youtube, linkedin
 from scoring.relevance import score_lead
-from storage.db import is_duplicate, save_lead
+from storage.db import is_duplicate, is_ignored_author, save_lead, get_active_brands, get_brand_searches
 from analysis.gaps import analyze_gaps
 
 SEARCHERS = {
@@ -21,15 +19,24 @@ SEARCHERS = {
 
 
 def run():
-    config_path = os.path.join(os.path.dirname(__file__), "config", "searches.yaml")
-    with open(config_path) as f:
-        config = yaml.safe_load(f)
+    brands = get_active_brands()
+
+    if not brands:
+        print("No active brands found in database.")
+        return
 
     total_saved = 0
 
-    for brand_slug, brand_config in config["brands"].items():
-        display_name = brand_config.get("display_name", brand_slug)
+    for brand in brands:
+        brand_slug = brand["slug"]
+        display_name = brand["display_name"]
+        brand_config = get_brand_searches(brand_slug)
+
         print(f"\n--- {display_name} ---")
+
+        if not brand_config:
+            print("  No search config found, skipping.")
+            continue
 
         all_posts = []
         platforms_used = []
@@ -53,6 +60,10 @@ def run():
 
             for post in posts:
                 if is_duplicate(post["post_id"]):
+                    continue
+
+                if is_ignored_author(brand_slug, post.get("author", "")):
+                    print(f"  > Ignored author: {post.get('author')}")
                     continue
 
                 try:

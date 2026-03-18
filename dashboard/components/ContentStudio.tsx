@@ -1,13 +1,8 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { useBrands } from '@/lib/useBrands'
 import CopyButton from './CopyButton'
-
-const BRANDS = [
-  { value: 'picasyfijas', label: 'Picas y Fijas' },
-  { value: 'fluentaspeech', label: 'Fluentaspeech' },
-  { value: 'comadrelab', label: 'ComadreLab' },
-]
 
 const PLATFORMS = [
   { value: 'reddit', label: 'Reddit' },
@@ -43,9 +38,10 @@ type ContentStudioProps = {
 
 export default function ContentStudio({
   initialTopic = '',
-  initialBrand = 'picasyfijas',
+  initialBrand = '',
   initialFormat = 'standalone_post',
 }: ContentStudioProps) {
+  const { brands } = useBrands()
   const [brand, setBrand] = useState(initialBrand)
   const [platform, setPlatform] = useState('bluesky')
   const [contentType, setContentType] = useState(initialFormat)
@@ -192,8 +188,9 @@ export default function ContentStudio({
         <div>
           <label className="mb-1 block text-xs font-medium text-gray-500">Brand</label>
           <select value={brand} onChange={(e) => setBrand(e.target.value)} className={selectClass}>
-            {BRANDS.map((b) => (
-              <option key={b.value} value={b.value}>{b.label}</option>
+            <option value="">Select brand...</option>
+            {brands.map((b) => (
+              <option key={b.slug} value={b.slug}>{b.display_name}</option>
             ))}
           </select>
         </div>

@@ -1,14 +1,4 @@
-const BRAND_STYLES: Record<string, { bg: string; fg: string }> = {
-  picasyfijas: { bg: '#f3f0ff', fg: '#7c3aed' },
-  fluentaspeech: { bg: '#eff6ff', fg: '#2563eb' },
-  comadrelab: { bg: '#fdf2f8', fg: '#db2777' },
-}
-
-const BRAND_LABELS: Record<string, string> = {
-  picasyfijas: 'Picas y Fijas',
-  fluentaspeech: 'Fluentaspeech',
-  comadrelab: 'ComadreLab',
-}
+import { useBrands } from '@/lib/useBrands'
 
 const PLATFORM_STYLES: Record<string, { bg: string; fg: string }> = {
   reddit: { bg: '#fff7ed', fg: '#c2410c' },
@@ -22,8 +12,10 @@ const PLATFORM_STYLES: Record<string, { bg: string; fg: string }> = {
 const DEFAULT_STYLE = { bg: '#f5f5f4', fg: '#78716c' }
 
 export function BrandBadge({ brand }: { brand: string }) {
-  const style = BRAND_STYLES[brand] || DEFAULT_STYLE
-  const label = BRAND_LABELS[brand] || brand
+  const { brandMap } = useBrands()
+  const config = brandMap[brand]
+  const style = config ? { bg: config.color_bg, fg: config.color_fg } : DEFAULT_STYLE
+  const label = config?.display_name || brand
   return (
     <span
       className="inline-block rounded-full px-2.5 py-0.5 text-xs font-medium"

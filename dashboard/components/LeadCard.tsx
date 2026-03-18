@@ -29,13 +29,13 @@ export default function LeadCard({ lead, onRemove }: LeadCardProps) {
     ? lead.content.slice(0, 300) + '...'
     : lead.content
 
-  async function updateStatus(status: 'replied' | 'skipped') {
+  async function updateStatus(status: 'replied' | 'skipped', ignoreAuthor = false) {
     setUpdating(true)
     try {
       await fetch(`/api/leads/${lead.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status }),
+        body: JSON.stringify({ status, ignore_author: ignoreAuthor }),
       })
       onRemove(lead.id)
     } catch (err) {
@@ -132,6 +132,17 @@ export default function LeadCard({ lead, onRemove }: LeadCardProps) {
         >
           Skip
         </button>
+        {lead.author && (
+          <button
+            onClick={() => updateStatus('skipped', true)}
+            disabled={updating}
+            className="filter-chip rounded-lg px-3.5 py-1.5 text-sm font-medium disabled:opacity-40"
+            style={{ background: '#fecaca', color: '#7f1d1d' }}
+            title={`Skip and never show leads from @${lead.author} again`}
+          >
+            Skip &amp; Ignore @{lead.author}
+          </button>
+        )}
       </div>
     </div>
   )
