@@ -1,6 +1,10 @@
+import sys
 from dotenv import load_dotenv
 
 load_dotenv()
+
+# Force unbuffered output so GitHub Actions shows logs in real time
+sys.stdout.reconfigure(line_buffering=True)
 
 from searchers import reddit, hackernews, bluesky, mastodon, threads, youtube, linkedin
 from scoring.relevance import score_lead
@@ -19,7 +23,9 @@ SEARCHERS = {
 
 
 def run():
+    print("Agent starting...")
     brands = get_active_brands()
+    print(f"Found {len(brands)} active brands.")
 
     if not brands:
         print("No active brands found in database.")
