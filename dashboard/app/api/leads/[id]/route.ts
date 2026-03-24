@@ -28,6 +28,13 @@ export async function PATCH(
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
+  // Mark post as seen so the agent never re-scrapes it
+  if (data.post_id) {
+    await supabaseServer
+      .from("seen_posts")
+      .upsert({ post_id: data.post_id }, { onConflict: "post_id" });
+  }
+
   if (ignoreAuthor && data.author) {
     await supabaseServer
       .from("ignored_authors")

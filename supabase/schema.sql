@@ -130,6 +130,11 @@ create table ignored_authors (
 
 create index on ignored_authors (brand, author);
 
+create table seen_posts (
+  post_id text primary key,
+  seen_at timestamptz default now()
+);
+
 -- RLS
 alter table brands enable row level security;
 create policy "public read brands" on brands for select using (true);
@@ -158,3 +163,7 @@ alter table ignored_authors enable row level security;
 create policy "public read ignored" on ignored_authors for select using (true);
 create policy "public insert ignored" on ignored_authors for insert with check (true);
 create policy "public delete ignored" on ignored_authors for delete using (true);
+
+alter table seen_posts enable row level security;
+create policy "public read seen" on seen_posts for select using (true);
+create policy "public insert seen" on seen_posts for insert with check (true);

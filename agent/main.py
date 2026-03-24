@@ -8,7 +8,7 @@ sys.stdout.reconfigure(line_buffering=True)
 
 from searchers import reddit, hackernews, bluesky, mastodon, threads, youtube, linkedin
 from scoring.relevance import score_lead
-from storage.db import is_duplicate, is_ignored_author, save_lead, get_active_brands, get_brand_searches
+from storage.db import is_duplicate, is_ignored_author, save_lead, mark_seen, get_active_brands, get_brand_searches
 from analysis.gaps import analyze_gaps
 
 SEARCHERS = {
@@ -67,6 +67,8 @@ def run():
             for post in posts:
                 if is_duplicate(post["post_id"]):
                     continue
+
+                mark_seen(post["post_id"])
 
                 if is_ignored_author(brand_slug, post.get("author", "")):
                     print(f"  > Ignored author: {post.get('author')}")

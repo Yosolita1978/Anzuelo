@@ -18,6 +18,32 @@ export async function DELETE(request: NextRequest) {
   cutoffDate.setDate(cutoffDate.getDate() - parseInt(olderThanDays));
   const cutoffISO = cutoffDate.toISOString();
 
+  // First, fetch post_ids of leads about to be deleted so we can mark them as seen
+  let fetchQuery = supabaseServer
+    .from("leads")
+    .select("id, post_id")
+    .eq("brand", brand)
+    .lt("found_at", cutoffISO);
+
+  if (status) {
+    fetchQuery = fetchQuery.eq("status", status);
+  }
+
+  const { data: leadsToDelete } = await fetchQuery;
+
+  // Mark all these posts as seen before deleting
+  if (leadsToDelete && leadsToDelete.length > 0) {
+    const seenRows = leadsToDelete
+      .filter((l) => l.post_id)
+      .map((l) => ({ post_id: l.post_id }));
+    if (seenRows.length > 0) {
+      await supabaseServer
+        .from("seen_posts")
+        .upsert(seenRows, { onConflict: "post_id" });
+    }
+  }
+
+  // Now delete the leads
   let query = supabaseServer
     .from("leads")
     .delete()
