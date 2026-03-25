@@ -34,7 +34,7 @@ export default function LeadsView() {
   const { brandOptions } = useBrands()
   const [brand, setBrand] = useState('')
   const [platform, setPlatform] = useState('')
-  const [status, setStatus] = useState('')
+  const [status, setStatus] = useState('new')
   const [scoreRange, setScoreRange] = useState('')
   const [leads, setLeads] = useState<Lead[]>([])
   const [loading, setLoading] = useState(false)
