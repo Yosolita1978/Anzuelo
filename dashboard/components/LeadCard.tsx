@@ -19,9 +19,12 @@ function timeAgo(dateStr: string): string {
 type LeadCardProps = {
   lead: Lead
   onRemove: (id: string) => void
+  selectMode?: boolean
+  selected?: boolean
+  onToggleSelect?: (id: string) => void
 }
 
-export default function LeadCard({ lead, onRemove }: LeadCardProps) {
+export default function LeadCard({ lead, onRemove, selectMode, selected, onToggleSelect }: LeadCardProps) {
   const [expanded, setExpanded] = useState(false)
   const [updating, setUpdating] = useState(false)
 
@@ -46,11 +49,21 @@ export default function LeadCard({ lead, onRemove }: LeadCardProps) {
 
   return (
     <div
-      className="card-animate rounded-xl border p-5"
-      style={{ borderColor: 'var(--border)', background: 'var(--surface)' }}
+      className={`card-animate rounded-xl border p-5 ${selectMode ? 'cursor-pointer' : ''} ${selected ? 'ring-2 ring-blue-400' : ''}`}
+      style={{ borderColor: selected ? 'rgb(96, 165, 250)' : 'var(--border)', background: 'var(--surface)' }}
+      onClick={selectMode && onToggleSelect ? () => onToggleSelect(lead.id) : undefined}
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
+          {selectMode && (
+            <input
+              type="checkbox"
+              checked={selected}
+              onChange={() => onToggleSelect?.(lead.id)}
+              onClick={(e) => e.stopPropagation()}
+              className="h-4 w-4 rounded border-gray-300 accent-blue-500"
+            />
+          )}
           <ScoreDot score={lead.score} />
           <PlatformBadge platform={lead.platform} />
           <BrandBadge brand={lead.brand} />

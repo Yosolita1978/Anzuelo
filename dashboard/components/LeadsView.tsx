@@ -43,6 +43,9 @@ export default function LeadsView() {
   const [deleting, setDeleting] = useState(false)
   const [deleteResult, setDeleteResult] = useState<string | null>(null)
   const [refetchKey, setRefetchKey] = useState(0)
+  const [selectMode, setSelectMode] = useState(false)
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+  const [batchSkipping, setBatchSkipping] = useState(false)
 
   useEffect(() => {
     if (!brand) {
@@ -75,6 +78,48 @@ export default function LeadsView() {
 
   function handleRemove(id: string) {
     setLeads((prev) => prev.filter((lead) => lead.id !== id))
+  }
+
+  function toggleSelect(id: string) {
+    setSelectedIds((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+
+  function toggleSelectAll() {
+    if (selectedIds.size === leads.length) {
+      setSelectedIds(new Set())
+    } else {
+      setSelectedIds(new Set(leads.map((l) => l.id)))
+    }
+  }
+
+  function exitSelectMode() {
+    setSelectMode(false)
+    setSelectedIds(new Set())
+  }
+
+  async function handleBatchSkip() {
+    if (selectedIds.size === 0) return
+    setBatchSkipping(true)
+    try {
+      const res = await fetch('/api/leads/batch-skip', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: Array.from(selectedIds) }),
+      })
+      if (res.ok) {
+        setLeads((prev) => prev.filter((l) => !selectedIds.has(l.id)))
+        exitSelectMode()
+      }
+    } catch (err) {
+      console.error('Batch skip failed:', err)
+    } finally {
+      setBatchSkipping(false)
+    }
   }
 
   function handleBatchDelete(days: number) {
@@ -239,14 +284,66 @@ export default function LeadsView() {
         </p>
       ) : (
         <>
-          <p className="text-xs" style={{ color: 'var(--muted)' }}>
-            {leads.length} lead{leads.length !== 1 ? 's' : ''}
-          </p>
+          <div className="flex items-center gap-3">
+            <p className="text-xs" style={{ color: 'var(--muted)' }}>
+              {leads.length} lead{leads.length !== 1 ? 's' : ''}
+            </p>
+            {!selectMode ? (
+              <button
+                onClick={() => setSelectMode(true)}
+                className="rounded-lg border px-3 py-1 text-xs font-medium transition-colors hover:border-blue-400 hover:text-blue-600"
+                style={{ borderColor: 'var(--border)', color: 'var(--muted)' }}
+              >
+                Select
+              </button>
+            ) : (
+              <>
+                <button
+                  onClick={toggleSelectAll}
+                  className="rounded-lg border px-3 py-1 text-xs font-medium transition-colors hover:border-blue-400 hover:text-blue-600"
+                  style={{ borderColor: 'var(--border)', color: 'var(--muted)' }}
+                >
+                  {selectedIds.size === leads.length ? 'Deselect all' : 'Select all'}
+                </button>
+                <button
+                  onClick={exitSelectMode}
+                  className="text-xs font-medium underline"
+                  style={{ color: 'var(--muted)' }}
+                >
+                  Cancel
+                </button>
+              </>
+            )}
+          </div>
           <div className="flex flex-col gap-4">
             {leads.map((lead) => (
-              <LeadCard key={lead.id} lead={lead} onRemove={handleRemove} />
+              <LeadCard
+                key={lead.id}
+                lead={lead}
+                onRemove={handleRemove}
+                selectMode={selectMode}
+                selected={selectedIds.has(lead.id)}
+                onToggleSelect={toggleSelect}
+              />
             ))}
           </div>
+          {selectMode && selectedIds.size > 0 && (
+            <div className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-xl border border-gray-200 bg-white px-6 py-3 shadow-lg">
+              <div className="flex items-center gap-4">
+                <span className="text-sm font-medium">
+                  {selectedIds.size} selected
+                </span>
+                <button
+                  onClick={handleBatchSkip}
+                  disabled={batchSkipping}
+                  className="rounded-lg px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+                  style={{ background: '#991b1b' }}
+                >
+                  {batchSkipping ? 'Skipping...' : 'Skip all'}
+                </button>
+              </div>
+            </div>
+          )}
         </>
       )}
     </div>
