@@ -34,6 +34,16 @@ function groupByWeek(entries: CalendarEntry[]): Map<string, CalendarEntry[]> {
 
 export default function CalendarGrid({ entries: initial }: CalendarGridProps) {
   const [entries, setEntries] = useState(initial)
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set())
+
+  function toggleExpand(id: string) {
+    setExpandedIds((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
 
   async function updateStatus(id: string, status: 'posted' | 'skipped') {
     const response = await fetch('/api/calendar', {
@@ -96,11 +106,21 @@ export default function CalendarGrid({ entries: initial }: CalendarGridProps) {
                   </span>
                 </div>
 
-                <p className="mt-2 text-sm text-gray-800">
-                  {entry.content.length > 80
-                    ? entry.content.slice(0, 80) + '...'
-                    : entry.content}
-                </p>
+                <div className="mt-2">
+                  <p className="text-sm text-gray-800 whitespace-pre-wrap">
+                    {entry.content.length > 80 && !expandedIds.has(entry.id)
+                      ? entry.content.slice(0, 80) + '...'
+                      : entry.content}
+                  </p>
+                  {entry.content.length > 80 && (
+                    <button
+                      onClick={() => toggleExpand(entry.id)}
+                      className="mt-1 text-xs font-medium text-blue-600 hover:text-blue-800"
+                    >
+                      {expandedIds.has(entry.id) ? 'Show less' : 'Show more'}
+                    </button>
+                  )}
+                </div>
 
                 {entry.status === 'draft' && (
                   <div className="mt-3 flex flex-wrap gap-2">
