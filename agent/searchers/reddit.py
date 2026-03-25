@@ -1,5 +1,7 @@
 import os
 import time
+from urllib.parse import urlparse
+
 import requests
 
 SERPER_URL = "https://google.serper.dev/search"
@@ -46,7 +48,8 @@ def search(brand: str, config: dict) -> list[dict]:
                 snippet = item.get("snippet", "")
                 content = f"{title} {snippet}".strip()[:1000]
 
-                post_id = link.rstrip("/").split("/")[-1]
+                clean_path = urlparse(link).path.rstrip("/")
+                post_id = clean_path.split("/")[-1]
 
                 results.append({
                     "post_id": f"reddit_{post_id}",

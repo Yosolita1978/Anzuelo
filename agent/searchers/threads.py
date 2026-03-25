@@ -1,5 +1,7 @@
 import os
 import time
+from urllib.parse import urlparse
+
 import requests
 
 SERPER_URL = "https://google.serper.dev/search"
@@ -47,7 +49,8 @@ def search(brand: str, config: dict) -> list[dict]:
                 content = f"{title} {snippet}".strip()[:1000]
 
                 # Extract post ID from URL
-                post_id = link.rstrip("/").split("/")[-1]
+                clean_path = urlparse(link).path.rstrip("/")
+                post_id = clean_path.split("/")[-1]
 
                 results.append({
                     "post_id": f"threads_{post_id}",
