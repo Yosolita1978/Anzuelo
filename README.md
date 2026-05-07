@@ -33,7 +33,7 @@ Supabase "brand_searches" table (search terms per platform)
        |
    Raw posts (deduplicated by post_id)
        |
-   Duplicate check against Supabase
+   Duplicate check against Supabase "seen_posts" table (persistent across runs)
        |
    Ignored author check against Supabase "ignored_authors" table
        |
@@ -64,6 +64,7 @@ anzuelo/
 │   ├── analysis/           # Content gap detection
 │   ├── storage/            # Supabase read/write
 │   ├── main.py             # Entrypoint
+│   ├── test_all.py         # Quick smoke test for all searchers
 │   └── requirements.txt
 ├── dashboard/              # Next.js 14 App Router
 │   ├── app/                # Pages + API routes
@@ -89,9 +90,11 @@ anzuelo/
 │   └── migrations/         # Incremental migrations
 │       ├── 001_add_brands_and_ignored_authors.sql
 │       └── 002_add_brand_searches.sql
-└── .github/
-    └── workflows/
-        └── run-agent.yml   # Scheduled + manual trigger
+├── .github/
+│   └── workflows/
+│       └── run-agent.yml   # Scheduled + manual trigger
+├── NEXT_STEPS.md           # Working notes / roadmap
+└── README.md
 ```
 
 ---
@@ -103,6 +106,7 @@ anzuelo/
 | `brands` | Brand config: slug, display name, colors, scoring prompt, website URL, Plausible link |
 | `brand_searches` | Search terms per brand+platform (queries, keywords, or hashtags) |
 | `leads` | Scored leads with status (new/replied/skipped) |
+| `seen_posts` | Persistent record of every post_id ever fetched — prevents duplicates across runs even after leads are deleted |
 | `ignored_authors` | Authors to skip in future runs (per brand) |
 | `content_opportunities` | AI-detected content gaps |
 | `content_calendar` | Scheduled content entries |
